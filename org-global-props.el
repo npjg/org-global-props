@@ -15,7 +15,7 @@
 ;; This package provides a standard interface for accessing and modifying
 ;; buffer-global keyword properties in org files (e.g. `#+TITLE: Secrets')
 
-(defun org--global-props (keyword &rest args)
+(defun org--global-props (keyword func &rest args)
   "Get the value from a #+KEYWORD: value line in
 BUFFER-OR-NAME or the current buffer. Return nil if there is
 none.
@@ -28,10 +28,7 @@ Adapted from John Kitchin, \"Getting keyword options in org-files.\""
         (if (save-excursion
               (or (re-search-forward re nil t)
                   (re-search-backward re nil t)))
-            (funcall func args)
-            (if replacement
-                (replace-match replacement nil nil nil 1)
-              (match-string-no-properties 1))))))
+            (apply func args)))))
 
 ;;;###autoload
 (defun org-global-prop-get (keyword &optional buffer-or-name)
